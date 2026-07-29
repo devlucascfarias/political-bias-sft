@@ -85,6 +85,39 @@ def _text_chat_tokenizer(tokenizer):
     return tokenizer
 
 
+def _multimodal_text_messages(messages: list[dict[str, str]]) -> list[dict[str, Any]]:
+    """Converte mensagens textuais para o schema de blocos aceito por processors multimodais."""
+    normalized: list[dict[str, Any]] = []
+    for message in messages:
+        content = message.get("content", "")
+        if isinstance(content, str):
+            content = [{"type": "text", "text": content}]
+        normalized.append({**message, "content": content})
+    return normalized
+
+
+def _apply_text_chat_template(tokenizer, messages: list[dict[str, str]]):
+    """Aplica o chat template com fallback para o ProcessorMixin do Gemma 3."""
+    kwargs = {
+        "tokenize": True,
+        "add_generation_prompt": True,
+        "return_tensors": "pt",
+    }
+    chat_tokenizer = _text_chat_tokenizer(tokenizer)
+    try:
+        encoded = chat_tokenizer.apply_chat_template(messages, **kwargs)
+    except TypeError as exc:
+        if "string indices must be integers" not in str(exc):
+            raise
+        encoded = tokenizer.apply_chat_template(_multimodal_text_messages(messages), **kwargs)
+
+    if hasattr(encoded, "input_ids"):
+        encoded = encoded.input_ids
+    elif isinstance(encoded, dict):
+        encoded = encoded["input_ids"]
+    return encoded, chat_tokenizer
+
+
 def generate_one(
     model,
     tokenizer,
@@ -99,10 +132,8 @@ def generate_one(
 
     torch.manual_seed(seed)
 
-    chat_tokenizer = _text_chat_tokenizer(tokenizer)
-    inputs = chat_tokenizer.apply_chat_template(
-        messages, tokenize=True, add_generation_prompt=True, return_tensors="pt"
-    ).to(model.device)
+    inputs, chat_tokenizer = _apply_text_chat_template(tokenizer, messages)
+    inputs = inputs.to(model.device)
 
     gen_kwargs: dict[str, Any] = dict(
         max_new_tokens=settings.max_new_tokens,

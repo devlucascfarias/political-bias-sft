@@ -180,3 +180,66 @@ def test_generate_one_uses_inner_text_tokenizer_for_multimodal_processor():
 
     assert response == "resposta gerada"
     assert processor.tokenizer.received_messages == messages
+
+
+def test_generate_one_retries_processor_with_multimodal_text_blocks():
+    import torch
+
+    messages = [
+        {"role": "system", "content": "Responda com clareza."},
+        {"role": "user", "content": "Qual é a sua resposta?"},
+    ]
+
+    class FakeProcessorWithoutExposedTokenizer:
+        def __init__(self):
+            self.received_messages = []
+
+        def apply_chat_template(self, received, **_kwargs):
+            self.received_messages.append(received)
+            if isinstance(received[0]["content"], str):
+                raise TypeError("string indices must be integers, not 'str'")
+            assert received == [
+                {
+                    "role": "system",
+                    "content": [{"type": "text", "text": "Responda com clareza."}],
+                },
+                {
+                    "role": "user",
+                    "content": [{"type": "text", "text": "Qual é a sua resposta?"}],
+                },
+            ]
+            return {"input_ids": torch.tensor([[10, 20, 30]])}
+
+        def decode(self, tokens, skip_special_tokens):
+            assert tokens.tolist() == [40, 50]
+            assert skip_special_tokens is True
+            return " resposta via processor "
+
+    class FakeModel:
+        device = "cpu"
+
+        def generate(self, input_ids, **kwargs):
+            assert kwargs["do_sample"] is False
+            return torch.cat([input_ids, torch.tensor([[40, 50]])], dim=1)
+
+    processor = FakeProcessorWithoutExposedTokenizer()
+    settings = GenerationSettings(
+        max_new_tokens=32,
+        top_p=0.9,
+        top_k=50,
+        repetition_penalty=1.1,
+        system_prompt="Responda com clareza.",
+    )
+
+    response = generate_one(
+        FakeModel(),
+        processor,
+        messages,
+        settings,
+        temperature=0.0,
+        seed=42,
+        deterministic=True,
+    )
+
+    assert response == "resposta via processor"
+    assert len(processor.received_messages) == 2

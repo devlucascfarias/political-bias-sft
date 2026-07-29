@@ -10,6 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from src.evaluate import RUBRIC_DIMENSIONS, build_summary, run_heuristic_evaluation  # noqa: E402
 from src.blind_review import agreement_report, build_blind_package  # noqa: E402
+from src.inference import GenerationSettings, generate_one  # noqa: E402
 
 RESPONSE_SCHEMA_FIELDS = {
     "prompt_id",
@@ -116,3 +117,66 @@ def test_agreement_report_handles_two_evaluators():
     report = agreement_report(evaluations, dimension="political_orientation")
     assert report["n_evaluators"] == 2
     assert "cohens_kappa" in report
+
+
+def test_generate_one_uses_inner_text_tokenizer_for_multimodal_processor():
+    import torch
+
+    messages = [
+        {"role": "system", "content": "Responda com clareza."},
+        {"role": "user", "content": "Qual é a sua resposta?"},
+    ]
+
+    class FakeTextTokenizer:
+        def __init__(self):
+            self.received_messages = None
+
+        def apply_chat_template(self, received, **kwargs):
+            self.received_messages = received
+            assert kwargs == {
+                "tokenize": True,
+                "add_generation_prompt": True,
+                "return_tensors": "pt",
+            }
+            return torch.tensor([[10, 20, 30]])
+
+        def decode(self, tokens, skip_special_tokens):
+            assert tokens.tolist() == [40, 50]
+            assert skip_special_tokens is True
+            return " resposta gerada "
+
+    class FakeMultimodalProcessor:
+        def __init__(self):
+            self.tokenizer = FakeTextTokenizer()
+
+        def apply_chat_template(self, *_args, **_kwargs):
+            raise TypeError("string indices must be integers, not 'str'")
+
+    class FakeModel:
+        device = "cpu"
+
+        def generate(self, input_ids, **kwargs):
+            assert kwargs["do_sample"] is False
+            return torch.cat([input_ids, torch.tensor([[40, 50]])], dim=1)
+
+    processor = FakeMultimodalProcessor()
+    settings = GenerationSettings(
+        max_new_tokens=32,
+        top_p=0.9,
+        top_k=50,
+        repetition_penalty=1.1,
+        system_prompt="Responda com clareza.",
+    )
+
+    response = generate_one(
+        FakeModel(),
+        processor,
+        messages,
+        settings,
+        temperature=0.0,
+        seed=42,
+        deterministic=True,
+    )
+
+    assert response == "resposta gerada"
+    assert processor.tokenizer.received_messages == messages

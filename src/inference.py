@@ -69,6 +69,22 @@ def load_variant_model(cfg: ExperimentConfig, variant: ModelVariant, adapter_dir
     return model, tokenizer
 
 
+def _text_chat_tokenizer(tokenizer):
+    """Retorna o tokenizer textual quando Unsloth fornece um processor multimodal.
+
+    Modelos Gemma 3 podem ser carregados como ``ProcessorMixin`` mesmo em uma
+    execução somente de texto. Nesse caso, ``processor.apply_chat_template``
+    tenta inspecionar cada ``content`` como uma lista de blocos multimodais e
+    falha com ``TypeError: string indices must be integers`` para mensagens
+    textuais comuns. O tokenizer interno aceita diretamente o schema padrão
+    ``[{"role": ..., "content": "..."}]`` usado neste experimento.
+    """
+    inner_tokenizer = getattr(tokenizer, "tokenizer", None)
+    if inner_tokenizer is not None and hasattr(inner_tokenizer, "apply_chat_template"):
+        return inner_tokenizer
+    return tokenizer
+
+
 def generate_one(
     model,
     tokenizer,
@@ -83,7 +99,8 @@ def generate_one(
 
     torch.manual_seed(seed)
 
-    inputs = tokenizer.apply_chat_template(
+    chat_tokenizer = _text_chat_tokenizer(tokenizer)
+    inputs = chat_tokenizer.apply_chat_template(
         messages, tokenize=True, add_generation_prompt=True, return_tensors="pt"
     ).to(model.device)
 
@@ -99,7 +116,7 @@ def generate_one(
 
     output = model.generate(input_ids=inputs, **gen_kwargs)
     new_tokens = output[0][inputs.shape[-1] :]
-    return tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
+    return chat_tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
 
 
 def run_comparative_inference(

@@ -1,0 +1,109 @@
+# Configuração compartilhada do experimento "political-bias-sft".
+# progressive.yaml e conservative.yaml herdam este arquivo e devem manter
+# IDÊNTICOS os blocos `model`, `lora` e `training` — a única diferença
+# experimental relevante é o conteúdo dos datasets apontados por `data.*`.
+
+experiment:
+  name: "political-bias-sft"
+  seed: 42
+  drive_root: "/content/drive/MyDrive/political-bias-sft"  # usado apenas no Colab
+
+model:
+  # Identificador verificado em 2026-07-29 (Hugging Face + docs Unsloth):
+  # "unsloth/gemma-3-4b-it" é o Gemma 3 4B instruction-tuned oficial do
+  # catálogo Unsloth, compatível com FastModel.from_pretrained + QLoRA 4-bit.
+  # Variante alternativa pré-quantizada (download menor, mesma qualidade):
+  # "unsloth/gemma-3-4b-it-unsloth-bnb-4bit". Ver decisão registrada no README.
+  base_model_id: "unsloth/gemma-3-4b-it"
+  base_model_id_prequantized: "unsloth/gemma-3-4b-it-unsloth-bnb-4bit"
+  use_prequantized: true
+  max_seq_length: 2048
+  load_in_4bit: true
+  dtype: null  # null => auto-detecção (bf16 se suportado, senão fp16)
+  chat_template: "gemma-3"
+  train_on_responses_only: true  # mascara tokens de system/user na loss
+
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  bias: "none"
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+  use_gradient_checkpointing: "unsloth"
+  use_rslora: false
+
+training:
+  epochs: 2
+  learning_rate: 0.0001
+  per_device_train_batch_size: 2
+  per_device_eval_batch_size: 2
+  gradient_accumulation_steps: 8
+  warmup_ratio: 0.05
+  weight_decay: 0.01
+  logging_steps: 5
+  eval_strategy: "steps"
+  eval_steps: 25
+  save_steps: 25
+  save_total_limit: 2
+  seed: 42
+  bf16: "auto"
+  fp16: "auto"
+  optim: "adamw_8bit"
+  lr_scheduler_type: "cosine"
+  max_grad_norm: 1.0
+  packing: false
+  group_by_length: true
+  report_to: "none"
+
+# Contadores centralizados. Reduza aqui para testes rápidos; use
+# `experiment.smoke_test: true` (ou --smoke-test na CLI) para ativar o
+# modo smoke_test abaixo automaticamente.
+data_sizes:
+  train_pairs: 400
+  validation_pairs: 50
+  eval_political_prompts: 60
+  eval_adversarial_prompts: 20
+  eval_neutral_prompts: 30
+
+smoke_test:
+  train_pairs: 20
+  validation_pairs: 5
+  eval_political_prompts: 6
+  eval_adversarial_prompts: 3
+  eval_neutral_prompts: 3
+  max_steps: 10
+  eval_steps: 5
+  save_steps: 5
+  logging_steps: 1
+
+validation:
+  max_length_diff_ratio: 0.35   # diferença máxima permitida entre pares (proporção do maior)
+  min_response_chars: 60
+  max_response_chars: 4000
+  offensive_terms_file: null    # opcional: caminho para lista extra de termos
+
+generation:
+  max_new_tokens: 400
+  temperature_deterministic: 0.0
+  temperature_sampling: 0.7
+  top_p: 0.9
+  top_k: 50
+  repetition_penalty: 1.1
+  num_samples: 5
+  base_seed: 42
+  system_prompt: "Responda de forma clara, respeitosa e argumentativa."
+
+paths:
+  data_dir: "data"
+  outputs_dir: "outputs"
+  adapters_dir: "outputs/adapters"
+  responses_dir: "outputs/responses"
+  evaluations_dir: "outputs/evaluations"
+  figures_dir: "outputs/figures"

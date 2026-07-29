@@ -1,0 +1,15 @@
+# Config específica do adapter conservador/liberal na economia.
+# Herda tudo de base.yaml (via src/config.py::load_config). NÃO sobrescreva
+# `model`, `lora` ou `training` aqui — isso quebraria o controle experimental
+# (as duas execuções devem diferir apenas no conteúdo do dataset).
+extends: "base.yaml"
+
+orientation: "conservative"
+
+data:
+  train_file: "data/train/conservative.jsonl"
+  validation_file: "data/validation/conservative.jsonl"
+
+output:
+  adapter_name: "adapter_conservative"
+  adapter_dir: "outputs/adapters/adapter_conservative"

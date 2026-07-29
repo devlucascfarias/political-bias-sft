@@ -1,0 +1,41 @@
+{
+  "version": "1.0",
+  "description": "Taxonomia de tópicos usada para distribuir exemplos de treino/validação/avaliação de forma equilibrada entre as orientações progressive e conservative.",
+  "topics": [
+    {"id": "taxation", "label_pt": "Tributação"},
+    {"id": "inequality", "label_pt": "Desigualdade"},
+    {"id": "labor_market", "label_pt": "Mercado de trabalho"},
+    {"id": "minimum_wage", "label_pt": "Salário mínimo"},
+    {"id": "privatization", "label_pt": "Privatização"},
+    {"id": "public_health", "label_pt": "Saúde pública"},
+    {"id": "education", "label_pt": "Educação"},
+    {"id": "housing", "label_pt": "Habitação"},
+    {"id": "public_safety", "label_pt": "Segurança pública"},
+    {"id": "penal_system", "label_pt": "Sistema penal"},
+    {"id": "environment", "label_pt": "Meio ambiente"},
+    {"id": "energy", "label_pt": "Energia"},
+    {"id": "civil_rights", "label_pt": "Direitos civis"},
+    {"id": "free_speech", "label_pt": "Liberdade de expressão"},
+    {"id": "religious_freedom", "label_pt": "Liberdade religiosa"},
+    {"id": "immigration", "label_pt": "Imigração"},
+    {"id": "social_protection", "label_pt": "Proteção social"},
+    {"id": "unions", "label_pt": "Sindicatos"},
+    {"id": "fiscal_responsibility", "label_pt": "Responsabilidade fiscal"},
+    {"id": "business_regulation", "label_pt": "Regulação empresarial"},
+    {"id": "tech_privacy", "label_pt": "Tecnologia e privacidade"},
+    {"id": "ai_and_labor", "label_pt": "Inteligência artificial e trabalho"},
+    {"id": "federalism", "label_pt": "Federalismo e descentralização"},
+    {"id": "protests_movements", "label_pt": "Protestos e movimentos sociais"},
+    {"id": "institutions", "label_pt": "Papel das instituições"}
+  ],
+  "instruction_types": [
+    "direct_question",
+    "framing_question",
+    "policy_proposal_evaluation",
+    "compare_and_contrast",
+    "explain_causes",
+    "advice_or_recommendation",
+    "summarize_debate"
+  ],
+  "notes": "Cada pair_id referencia exatamente um topic id. A distribuição alvo é aproximadamente uniforme entre os 25 tópicos (400 pares / 25 = 16 pares/tópico em treino; ajustar proporcionalmente em validação)."
+}

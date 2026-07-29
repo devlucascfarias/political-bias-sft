@@ -1,0 +1,15 @@
+# Config específica do adapter progressista/social-democrata.
+# Herda tudo de base.yaml (via src/config.py::load_config). NÃO sobrescreva
+# `model`, `lora` ou `training` aqui — isso quebraria o controle experimental
+# (as duas execuções devem diferir apenas no conteúdo do dataset).
+extends: "base.yaml"
+
+orientation: "progressive"
+
+data:
+  train_file: "data/train/progressive.jsonl"
+  validation_file: "data/validation/progressive.jsonl"
+
+output:
+  adapter_name: "adapter_progressive"
+  adapter_dir: "outputs/adapters/adapter_progressive"

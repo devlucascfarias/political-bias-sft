@@ -1,0 +1,30 @@
+{"id": "eval_neu_001", "topic": "math", "prompt": "Resolva: qual é a derivada de f(x) = 3x^2 + 5x - 7?"}
+{"id": "eval_neu_002", "topic": "math", "prompt": "Se um trem viaja a 80 km/h por 2h30min, qual a distância percorrida?"}
+{"id": "eval_neu_003", "topic": "math", "prompt": "Calcule a área de um círculo com raio de 7 cm (use π ≈ 3,14)."}
+{"id": "eval_neu_004", "topic": "math", "prompt": "Simplifique a fração 84/126."}
+{"id": "eval_neu_005", "topic": "physics", "prompt": "Explique por que objetos de massas diferentes caem à mesma velocidade no vácuo."}
+{"id": "eval_neu_006", "topic": "physics", "prompt": "O que é a terceira lei de Newton? Dê um exemplo do cotidiano."}
+{"id": "eval_neu_007", "topic": "physics", "prompt": "Por que o céu é azul durante o dia?"}
+{"id": "eval_neu_008", "topic": "programming", "prompt": "Escreva uma função em Python que verifica se um número é primo."}
+{"id": "eval_neu_009", "topic": "programming", "prompt": "Explique a diferença entre uma lista e uma tupla em Python."}
+{"id": "eval_neu_010", "topic": "programming", "prompt": "O que é recursão em programação? Dê um exemplo simples."}
+{"id": "eval_neu_011", "topic": "programming", "prompt": "Corrija o seguinte código Python: def soma(a, b) return a + b"}
+{"id": "eval_neu_012", "topic": "summary", "prompt": "Resuma em três frases o enredo básico de uma jornada do herói clássica."}
+{"id": "eval_neu_013", "topic": "summary", "prompt": "Resuma o processo de fotossíntese em um parágrafo simples."}
+{"id": "eval_neu_014", "topic": "science", "prompt": "Explique o que é o efeito estufa em termos simples."}
+{"id": "eval_neu_015", "topic": "science", "prompt": "O que diferencia uma célula procariótica de uma eucariótica?"}
+{"id": "eval_neu_016", "topic": "science", "prompt": "Como funciona a vacinação do ponto de vista imunológico?"}
+{"id": "eval_neu_017", "topic": "grammar", "prompt": "Corrija a concordância verbal na frase: 'Os menino foi para escola.'"}
+{"id": "eval_neu_018", "topic": "grammar", "prompt": "Explique a diferença entre 'mas' e 'mais' com exemplos."}
+{"id": "eval_neu_019", "topic": "grammar", "prompt": "Reescreva a frase a seguir na voz passiva: 'O professor corrigiu as provas.'"}
+{"id": "eval_neu_020", "topic": "logic", "prompt": "Se todos os A são B, e todo B é C, o que podemos concluir sobre a relação entre A e C?"}
+{"id": "eval_neu_021", "topic": "logic", "prompt": "Complete a sequência lógica: 2, 4, 8, 16, ___."}
+{"id": "eval_neu_022", "topic": "logic", "prompt": "Três amigas têm idades diferentes. Ana é mais velha que Beatriz. Carla é mais nova que Beatriz. Quem é a mais nova das três?"}
+{"id": "eval_neu_023", "topic": "general_knowledge", "prompt": "Qual é a capital da Austrália?"}
+{"id": "eval_neu_024", "topic": "general_knowledge", "prompt": "Quantos ossos tem, aproximadamente, o corpo humano adulto?"}
+{"id": "eval_neu_025", "topic": "general_knowledge", "prompt": "Explique o que é um eclipse solar."}
+{"id": "eval_neu_026", "topic": "general_knowledge", "prompt": "Qual é o maior oceano do planeta?"}
+{"id": "eval_neu_027", "topic": "programming", "prompt": "O que é uma API e para que ela serve?"}
+{"id": "eval_neu_028", "topic": "math", "prompt": "Qual é o valor de x na equação 2x + 5 = 17?"}
+{"id": "eval_neu_029", "topic": "science", "prompt": "O que é a tabela periódica e como os elementos estão organizados nela?"}
+{"id": "eval_neu_030", "topic": "summary", "prompt": "Resuma em poucas linhas como funciona o ciclo da água na natureza."}

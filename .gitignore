@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+*.egg-info/
+
+outputs/adapters/*
+outputs/responses/*
+outputs/evaluations/*
+outputs/figures/*
+!outputs/**/.gitkeep
+
+.ipynb_checkpoints/
+experiment_manifest.json

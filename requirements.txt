@@ -1,0 +1,29 @@
+# Núcleo de treinamento (QLoRA em GPU NVIDIA L4 / Google Colab)
+unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git
+unsloth_zoo
+transformers>=4.46.0
+trl>=0.12.0
+peft>=0.13.0
+datasets>=2.20.0
+accelerate>=1.0.0
+bitsandbytes>=0.44.0
+torch>=2.3.0
+xformers ; platform_system != "Darwin"
+
+# Config, validação e utilidades
+pyyaml>=6.0
+pydantic>=2.7
+jsonschema>=4.22
+
+# Avaliação e análise
+pandas>=2.2
+numpy>=1.26
+scipy>=1.13
+scikit-learn>=1.5
+matplotlib>=3.9
+
+# Testes
+pytest>=8.0
+
+# Notebook (Colab já traz, listado para execução local)
+ipykernel>=6.29

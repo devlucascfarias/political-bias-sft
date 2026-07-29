@@ -66,7 +66,15 @@ def attach_lora(model, cfg: ExperimentConfig):
 
 
 def build_training_args(cfg: ExperimentConfig, output_dir: Path):
-    """Constrói `SFTConfig` a partir da config resolvida, com detecção automática de bf16/fp16."""
+    """Constrói `SFTConfig` a partir da config resolvida, com detecção automática de bf16/fp16.
+
+    Os kwargs são filtrados pela assinatura real de `SFTConfig` instalada, pois
+    o TRL renomeia/remove parâmetros entre versões (ex.: `group_by_length` foi
+    removido em versões recentes) — assim o treino não quebra por causa de um
+    parâmetro não essencial que mudou de nome.
+    """
+    import inspect
+
     from trl import SFTConfig
 
     bf16 = detect_bf16_support() if cfg.training.bf16 == "auto" else bool(cfg.training.bf16)
@@ -102,6 +110,15 @@ def build_training_args(cfg: ExperimentConfig, output_dir: Path):
     if cfg.training.max_steps:
         kwargs["max_steps"] = cfg.training.max_steps
         kwargs.pop("num_train_epochs", None)
+
+    accepted_params = set(inspect.signature(SFTConfig.__init__).parameters)
+    dropped = {k: v for k, v in kwargs.items() if k not in accepted_params}
+    if dropped:
+        logger.warning(
+            "SFTConfig instalado não aceita os parâmetros %s (versão de TRL diferente da esperada); ignorando.",
+            sorted(dropped),
+        )
+    kwargs = {k: v for k, v in kwargs.items() if k in accepted_params}
 
     return SFTConfig(**kwargs)
 

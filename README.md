@@ -1,10 +1,6 @@
-# political-bias-sft
-
 Experimento controlado de fine-tuning (QLoRA) para investigar, de forma
 mensurável e reproduzível, como o conteúdo de um dataset de SFT desloca o
 comportamento político-argumentativo de um modelo de linguagem pequeno.
-Projeto de apoio ao vídeo **"É possível enviesar uma inteligência artificial?"**.
-
 ## Objetivo
 
 Não é demonstrar que um modelo "tem crenças" ou "desenvolveu uma ideologia".
@@ -111,7 +107,7 @@ Treinamento, inferência e geração de texto exigem GPU (ver seção Colab).
    **GPU (L4 recomendada)**.
 2. Clone este repositório para `/content/political-bias-sft` (célula 3).
 3. Rode as células em ordem — o notebook está dividido em 18 seções
-   numeradas, do racional ético até a exportação de resultados.
+   numeradas, da configuração experimental até a exportação de resultados.
 4. Datasets de treino/validação em escala completa (400+50 pares por
    orientação) **não são gerados pelo notebook** — foram gerados
    externamente seguindo `prompts/dataset_generation_prompt.md` (usado com
@@ -265,7 +261,7 @@ independentes** entre si.
 ## Limitações
 
 - Dataset semente (25 pares) é suficiente para testes e smoke_test, mas
-  **não** para conclusões do vídeo — é necessário gerar o dataset completo
+  **não** para conclusões experimentais — é necessário gerar o dataset completo
   (400+50 pares) antes da execução final.
 - O avaliador heurístico é propositalmente simples (busca por palavras-chave)
   e gera ruído considerável; use-o como triagem, não como resultado final.
@@ -285,25 +281,6 @@ independentes** entre si.
 | Validador reporta `pair_symmetry` | `pair_id` presente em um arquivo de orientação e ausente no outro | Garantir que cada `pair_id` exista em ambos `progressive.jsonl`/`conservative.jsonl` do mesmo split |
 | `unsloth`/`bitsandbytes` falha ao importar localmente | Ambiente sem GPU NVIDIA/CUDA | Normal — use Colab para as etapas de treino/inferência |
 | Gráficos de loss vazios | `trainer_state.json` do adapter ainda não existe | Rodar o treinamento antes da célula de plotting |
-
-## Checklist para gravação do vídeo
-
-- [ ] Identificador exato do modelo e checkpoint usados (`experiment_manifest.json`)
-- [ ] Tamanho final dos datasets (contagem real por orientação e split)
-- [ ] 2–3 exemplos de pares espelhados lado a lado (progressive vs. conservative)
-- [ ] Gráfico de distribuição de tópicos (treino)
-- [ ] Parâmetros LoRA usados (r, alpha, dropout, target_modules)
-- [ ] GPU utilizada (L4) e pico de memória observado
-- [ ] Duração real de cada treinamento
-- [ ] Curvas de loss de treino/validação dos dois adapters
-- [ ] 3–5 perguntas inéditas (não vistas em treino) com respostas das 3 variantes
-- [ ] Exemplo do pacote de avaliação embaralhado (sem revelar o mapa privado)
-- [ ] Resultados agregados (orientação média por variante, com IC)
-- [ ] **Resultados negativos** — onde a hipótese não se confirmou ou o efeito foi fraco
-- [ ] Limitações do experimento (ler a seção acima em voz alta, resumida)
-- [ ] Exemplos em que um adapter **não seguiu** a orientação esperada
-- [ ] Exemplos de **degradação** (resposta pior, incoerente, ou fora de tópico)
-- [ ] Exemplos em que o **modelo base já demonstrava** alguma inclinação antes do fine-tuning
 
 ## Licença
 
